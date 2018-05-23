@@ -17,7 +17,8 @@ const topic1 = 'EEEDays/zeroDevice-1"';
 const topic2 = 'EEEDays/zeroDevice-1/cmd'; //subscribe to all topics
 
 //const broker_server = 'mqtt://192.168.43.114';
-const broker_server = 'mqtt://192.168.1.2';
+//const broker_server = 'mqtt://192.168.1.2';
+const broker_server = 'mqtt://192.168.1.2:1883';
 
 const options = {
 	clientId : 'MyMQTT',
@@ -31,11 +32,13 @@ clientMqtt.on('error', mqtt_error);
 clientMqtt.on('message', mqtt_messageReceived);
 
 function mqtt_connect() {
+	console.log('MQTT Connected');
 	clientMqtt.subscribe(topic1);
 	clientMqtt.subscribe(topic2);
 }
 
 function mqtt_reconnect(err){
+	console.log('MQTT reconnect');
 	//clientMqtt = mqtt.connect(broker_server, options); // reconnect
 }
 
@@ -44,6 +47,7 @@ function mqtt_error(err){
 }
 
 function after_publish() {
+	console.log('MQTT Publish');
 	//call after publish
 }
 

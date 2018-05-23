@@ -36,23 +36,23 @@ $(document).ready(function() {
 	      '<tbody>' + 
 	      '<tr>' +
 	      '<th> Temperature </th> ' +
-	      '<th> ' + temperature + ' </th> ' +
+	      '<th id="temp1"> ' + temperature + ' </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Humidity </th> ' +
-	      '<th> ' + humidity + ' </th> ' +
+	      '<th id="humid1"> ' + humidity + ' </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Wind Speed </th> ' +
-	      '<th> ' + windSpeed + ' </th> ' +
+	      '<th id="windSpeed1"> ' + windSpeed + ' </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Wind Direction </th> ' +
-	      '<th> ' + windDirection + ' </th> ' +
+	      '<th id="windDirection1"> ' + windDirection + ' </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Lux Intensity </th> ' +
-	      '<th> ' + luxIntensity + ' </th> ' +
+	      '<th id="luxIntensity1"> ' + luxIntensity + ' </th> ' +
 	      '</tr>' +
 	      '</tbody>' +
 	      '</table>' +
@@ -139,5 +139,11 @@ $(document).ready(function() {
   var numberDevices = locations.length;
   $('#numberDevice').text(numberDevices.toString());
 
+  // socket bro
+  var socket = io.connect();
+  socket.on('aws-data', (data)=> {
+  	console.log(data);
+  	// /$('#temp1').text(data);
+  });
 
 });
