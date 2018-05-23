@@ -9,6 +9,75 @@ app.use(express.static(path.join(__dirname,'www'))); // untuk nempation file web
 const portListen = 1234;
 server.listen(portListen);
 console.log("Server starting... 127.0.0.1:" + portListen)
+
+var idDevice = 'zeroDevice-1', temperature = 0 , humidity = 0 , windSpeed = 0 , windDirection = 0, luxIntensity = 0;
+
+/*=====================================
+=            Postgress SQL            =
+=====================================*/
+const postgress = require('pg');
+const config = {
+    user: 'pi',
+    database: 'zeroWeather',
+    password: 'noczero',
+    port: 5432
+};
+
+const pool = new postgress.Pool(config);
+//postgres://dbusername:passwrod@server:port/database
+const connectionString = process.env.DATABASE_URL || 'postgres://pi:noczero@192.168.1.2:5432/zeroWeather';
+
+function insertDataToDB(){ 
+	pool.connect((err,client,done) => {
+		if(err){
+			done();
+			console.log(err);
+		}
+		if (dataDHT22 != undefined) {
+			const queryString = "INSERT INTO aws (id,temperature,humidity,windspeed,winddirection,lux) VALUES (" +  [idDevice,temperature, humidity,windspeed,windDirection,luxIntensity].join(",")  + ")";
+			
+			client.query(queryString , (err,result) => {
+				if(err)
+					console.log(err)
+				else
+					console.log('Insert data to Database success..');
+
+				done();
+
+			});
+		}
+	});
+}
+
+/*===================================
+=            API Express            =
+===================================*/
+app.get('/api/v1', (req,res,next) => {
+	 //let result = getIndoor();
+	//const results; 
+	pool.connect((err,client,done) => {
+		if(err){
+			done();
+			console.log(err);
+		} else {
+			const queryString = "SELECT id,temperature,humidity,windspeed,winddirection,lux,extract(epoch from waktu) as date FROM aws";
+
+			client.query(queryString, (err,result) => {
+				done();
+				if(err){
+					console.log(err);
+				} else {
+					//console.log(result.rows);
+					
+					 res.json(result);
+					 console.log("Get data using API...");
+				}		
+			});
+		}
+	});
+});
+
+
 // /*============================
 // =            MQTT            =
 // ============================*/
