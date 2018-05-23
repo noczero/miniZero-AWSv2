@@ -57,7 +57,7 @@ $(document).ready(function() {
 	      '</tbody>' +
 	      '</table>' +
 	      '' +
-	      '<p> Data Colletion from this device, <a href="graph.html">'+
+	      '<p> Realtime graph, <a href="graph-Device1.html">'+
 	      'Click Here</a> </p>'+
 	      	      '<small>' + now + '</small>' +
 
@@ -105,7 +105,7 @@ $(document).ready(function() {
 	      '</tbody>' +
 	      '</table>' +
 	      '' +
-	      '<p> Data Colletion from this device, <a href="graph.html">'+
+	      '<p> Realtime graph, <a href="graph.html">'+
 	      'Click Here</a> </p>'+
 	      	      '<small>' + now + '</small>' +
 
@@ -149,6 +149,7 @@ $(document).ready(function() {
   	windDirection = data.windDirection;
   	luxIntensity = data.luxIntensity;
 
+  	// set data to html id
   	$('#temp1').text(data.temperature + ' Celcius');
   	$('#humid1').text(data.humidity + ' %');
   	$('#windSpeed1').text(data.windSpeeds + ' m/s');
