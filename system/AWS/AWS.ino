@@ -197,11 +197,12 @@ int readWindSpeed(){
   return count;
 }
 
+int MIN_VALUE = 25, MAX_VALUE = 800;
 int readLDR(){
   switchMode(D8,LOW,D7,LOW,D6,HIGH); // y1 Input
   int value = analogRead(ADC);
-
-  return value;
+  int lux = 100 - ((value - MIN_VALUE) * 100 / (MAX_VALUE - MIN_VALUE));
+  return lux;
 }
 
 float temperature = 0.0 , humidity = 0.0;
@@ -213,9 +214,10 @@ void setTemperatureHumidity(){
 
 int windSpeed = 0, windDirection = 0, luxIntensity = 0;
 int increment = 0;
+float windSpeeds = 0.0;
 void loop() {
   // put your main code here, to run repeatedly:
-  windSpeed = readWindSpeed();
+  windSpeed = readWindSpeed(); // old
   windDirection = readWindDirection();
   luxIntensity = readLDR();
   setTemperatureHumidity();
@@ -223,8 +225,10 @@ void loop() {
   
   delay(200);
 
+  //calcualte windSpeed m/s
   if (increment >= 5){
-    count = 0;
+    windSpeeds = count*2*3.14*0.02; 
+    count = 0; // reset the rps
     increment = 0;
   }
   increment++;
@@ -241,8 +245,34 @@ void sendToMQTT(){
   
 }
 
+bool pulsing, pulSec;
+unsigned long pulse, pulseHist;
+float rpm, kec;
+// not to try
+float calculateWindSpeed(){
+  if(pulsing){
+    pulsing=false;
+    pulSec=true;
+    pulseHist=pulse;
+    pulse=millis()-4;
+    unsigned long pulseDelt=pulse-pulseHist;
+    rpm=60000.00/float(pulseDelt);
+   }
+   
+   //if(timing+sampleDuration <= millis()){
+    if(!pulSec){
+      rpm=0.00;
+      }
+      rps = rpm/60;
+      kec = rps*2*3.14*0,02;
+      pulSec=false;
+   //}
+
+   return kec;
+}
+
 void printAllValue(){
-  Serial.print("Wind Speed : "); Serial.println(windSpeed);
+  Serial.print("Wind Speed : "); Serial.println(windSpeeds);
   Serial.print("Wind Direction : "); Serial.println(windDirection);
   Serial.print("Lux :"); Serial.println(luxIntensity);
   Serial.print("Temperature : "); Serial.println(temperature);
