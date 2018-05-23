@@ -57,8 +57,9 @@ $(document).ready(function() {
 	      '</tbody>' +
 	      '</table>' +
 	      '' +
-	      '<p> Realtime graph, <a href="graph-Device1.html">'+
-	      'Click Here</a> </p>'+
+	      '<p> <a class="btn btn-primary" href="graph-Device1.html">'+
+	      '	Realtime graph </a> <a class="btn btn-info" href="graphMonthly-Device1.html">'+
+	      '	Monthly graph </a> </p>'+
 	      	      '<small>' + now + '</small>' +
 
 	      '</div>'+
@@ -105,8 +106,9 @@ $(document).ready(function() {
 	      '</tbody>' +
 	      '</table>' +
 	      '' +
-	      '<p> Realtime graph, <a href="graph.html">'+
-	      'Click Here</a> </p>'+
+	      '<p> <a class="btn btn-primary" href="graph.html">'+
+	      '	Realtime graph </a> <a class="btn btn-info" href="graph.html">'+
+	      '	Monthly graph </a> </p>'+
 	      	      '<small>' + now + '</small>' +
 
 	      '</div>'+

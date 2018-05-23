@@ -1,3 +1,4 @@
+'use strict';
 // EXPREES DAN SOCKET IO
 const express = require('express'); // import package express
 const app = express(); 
@@ -8,7 +9,7 @@ const path = require('path'); // import package path (sudah default ada)
 app.use(express.static(path.join(__dirname,'www'))); // untuk nempation file web kita di folder www
 const portListen = 1234;
 server.listen(portListen);
-console.log("Server starting... 127.0.0.1:" + portListen)
+console.log("Server starting... 192.168.1.2:" + portListen)
 
 var idDevice = 'zeroDevice-1', temperature = 0 , humidity = 0 , windSpeed = 0 , windDirection = 0, luxIntensity = 0;
 
@@ -33,8 +34,8 @@ function insertDataToDB(){
 			done();
 			console.log(err);
 		}
-		if (dataDHT22 != undefined) {
-			const queryString = "INSERT INTO aws (id,temperature,humidity,windspeed,winddirection,lux) VALUES (" +  [idDevice,temperature, humidity,windspeed,windDirection,luxIntensity].join(",")  + ")";
+		//if (dataDHT22 != undefined) {
+			const queryString = "INSERT INTO aws (id,temperature,humidity,windspeed,winddirection,lux) VALUES (" +  [idDevice,temperature, humidity,windSpeed,windDirection,luxIntensity].join(",")  + ")";
 			
 			client.query(queryString , (err,result) => {
 				if(err)
@@ -45,7 +46,7 @@ function insertDataToDB(){
 				done();
 
 			});
-		}
+		//}
 	});
 }
 
@@ -121,8 +122,8 @@ function after_publish() {
 	//call after publish
 }
 
-var dataDHT22;
-var listMessage = [];
+let dataDHT22;
+let listMessage = [];
 // pesan keterima dari broker dan diteruskan ke client
 function mqtt_messageReceived(topic , message , packet){
 	//console.log('Message received : ' + message);
@@ -137,6 +138,13 @@ function mqtt_messageReceived(topic , message , packet){
 		// message 
 		listMessage = parsingRAWData(message,","); //parse the message by comma
 		console.log("MSG : " +listMessage);
+		// set message to var
+		windSpeed = listMessage[0];
+		windDirection = listMessage[1];
+		luxIntensity = listMessage[2];
+		temperature = listMessage[3];
+		humidity = listMessage[4];
+
 		io.sockets.emit('aws-data', {
 									//json
 									// call in client data.topic , data.windSpeeds....
@@ -161,7 +169,7 @@ function mqtt_messageReceived(topic , message , packet){
 /*=================================
 =            Socket IO            =
 =================================*/
-var jumlahClient = 0;
+let jumlahClient = 0;
 io.on('connection' , (socket)=> {
 	jumlahClient++;
 	console.log('New Client Connected');
@@ -190,8 +198,14 @@ io.on('connection' , (socket)=> {
 // argument 2 : pemisah
 // return array data [0] =123 [1] =434 [2] =5334
 function parsingRAWData(data,delimiter){
-	var result;
+	let result;
 	result = data.toString().replace(/(\r\n|\n|\r)/gm,"").split(delimiter);
 
 	return result;
 }
+
+insertDataToDB();
+// call it every 5 minutes
+setInterval( ()=> {
+	insertDataToDB();
+}, 1000*60*5);

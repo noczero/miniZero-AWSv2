@@ -99,7 +99,9 @@ $(document).ready(function() {
 	            tooltip: {
 	                valueDecimals: 2
 	            }
-	        }]
+	        }],credits: {
+		      enabled: false
+		 	}
     	});
 
     	Highcharts.stockChart('humidGraph', {
@@ -117,7 +119,9 @@ $(document).ready(function() {
 	            tooltip: {
 	                valueDecimals: 2
 	            }
-	        }]
+	        }],credits: {
+		      enabled: false
+		 }
     	});
 
     	Highcharts.stockChart('windDirectionGraph', {
@@ -135,7 +139,9 @@ $(document).ready(function() {
 	            tooltip: {
 	                valueDecimals: 2
 	            }
-	        }]
+	        }],credits: {
+		      enabled: false
+		 }
     	});
 
     	Highcharts.stockChart('windSpeedGraph', {
@@ -153,7 +159,9 @@ $(document).ready(function() {
 	            tooltip: {
 	                valueDecimals: 2
 	            }
-	        }]
+	        }],credits: {
+		      enabled: false
+		 }
     	});
 
     	Highcharts.stockChart('luxIntensityGraph', {
@@ -171,7 +179,9 @@ $(document).ready(function() {
 	            tooltip: {
 	                valueDecimals: 2
 	            }
-	        }]
+	        }],credits: {
+		      enabled: false
+		 }
     	});
 
 
