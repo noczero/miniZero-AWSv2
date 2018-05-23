@@ -121,8 +121,8 @@ function after_publish() {
 	//call after publish
 }
 
-let dataDHT22;
-let listMessage = [];
+var dataDHT22;
+var listMessage = [];
 // pesan keterima dari broker dan diteruskan ke client
 function mqtt_messageReceived(topic , message , packet){
 	//console.log('Message received : ' + message);
@@ -161,7 +161,7 @@ function mqtt_messageReceived(topic , message , packet){
 /*=================================
 =            Socket IO            =
 =================================*/
-let jumlahClient = 0;
+var jumlahClient = 0;
 io.on('connection' , (socket)=> {
 	jumlahClient++;
 	console.log('New Client Connected');
@@ -190,7 +190,7 @@ io.on('connection' , (socket)=> {
 // argument 2 : pemisah
 // return array data [0] =123 [1] =434 [2] =5334
 function parsingRAWData(data,delimiter){
-	let result;
+	var result;
 	result = data.toString().replace(/(\r\n|\n|\r)/gm,"").split(delimiter);
 
 	return result;
