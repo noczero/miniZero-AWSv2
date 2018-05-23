@@ -13,15 +13,15 @@ console.log("Server starting... 127.0.0.1:" + portListen)
 // =            MQTT            =
 // ============================*/
 const mqtt = require('mqtt');
-const topic1 = 'EEEDays/zeroDevice-1"';
+const topic1 = 'EEEDays/zeroDevice-1';
 const topic2 = 'EEEDays/zeroDevice-1/cmd'; //subscribe to all topics
 
 //const broker_server = 'mqtt://192.168.43.114';
 //const broker_server = 'mqtt://192.168.1.2';
-const broker_server = 'mqtt://192.168.1.2:1883';
+const broker_server = 'mqtt://192.168.1.2';
 
 const options = {
-	clientId : 'MyMQTT',
+	clientId : 'zero_device' + Math.random().toString(16).substr(2, 8),
 	port : 1883,
 	keepalive : 60
 }
@@ -38,6 +38,7 @@ function mqtt_connect() {
 }
 
 function mqtt_reconnect(err){
+	console.log(err);
 	console.log('MQTT reconnect');
 	//clientMqtt = mqtt.connect(broker_server, options); // reconnect
 }

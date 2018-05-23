@@ -36,23 +36,23 @@ $(document).ready(function() {
 	      '<tbody>' + 
 	      '<tr>' +
 	      '<th> Temperature </th> ' +
-	      '<th id="temp1"> ' + temperature + ' </th> ' +
+	      '<th id="temp1"> ' + temperature + ' Celcius </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Humidity </th> ' +
-	      '<th id="humid1"> ' + humidity + ' </th> ' +
+	      '<th id="humid1"> ' + humidity + ' %</th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Wind Speed </th> ' +
-	      '<th id="windSpeed1"> ' + windSpeed + ' </th> ' +
+	      '<th id="windSpeed1"> ' + windSpeed + ' m/s </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Wind Direction </th> ' +
-	      '<th id="windDirection1"> ' + windDirection + ' </th> ' +
+	      '<th id="windDirection1"> ' + windDirection + ' degree </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Lux Intensity </th> ' +
-	      '<th id="luxIntensity1"> ' + luxIntensity + ' </th> ' +
+	      '<th id="luxIntensity1"> ' + luxIntensity + ' lux </th> ' +
 	      '</tr>' +
 	      '</tbody>' +
 	      '</table>' +
@@ -84,23 +84,23 @@ $(document).ready(function() {
 	      '<tbody>' + 
 	      '<tr>' +
 	      '<th> Temperature </th> ' +
-	      '<th> ' + temperature + ' </th> ' +
+	      '<th id="temp2"> ' + temperature + ' Celcius </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Humidity </th> ' +
-	      '<th> ' + humidity + ' </th> ' +
+	      '<th id="humid2"> ' + humidity + ' %</th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Wind Speed </th> ' +
-	      '<th> ' + windSpeed + ' </th> ' +
+	      '<th id="windSpeed2"> ' + windSpeed + ' m/s </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Wind Direction </th> ' +
-	      '<th> ' + windDirection + ' </th> ' +
+	      '<th id="windDirection2"> ' + windDirection + ' degree </th> ' +
 	      '</tr>' +
 	      '<tr>' +
 	      '<th> Lux Intensity </th> ' +
-	      '<th> ' + luxIntensity + ' </th> ' +
+	      '<th id="luxIntensity2"> ' + luxIntensity + ' lux </th> ' +
 	      '</tr>' +
 	      '</tbody>' +
 	      '</table>' +
@@ -143,7 +143,17 @@ $(document).ready(function() {
   var socket = io.connect();
   socket.on('aws-data', (data)=> {
   	console.log(data);
-  	// /$('#temp1').text(data);
+  	temperature = data.temperature;
+  	humidity = data.humidity;
+  	windSpeed = data.windSpeeds;
+  	windDirection = data.windDirection;
+  	luxIntensity = data.luxIntensity;
+
+  	$('#temp1').text(data.temperature + ' Celcius');
+  	$('#humid1').text(data.humidity + ' %');
+  	$('#windSpeed1').text(data.windSpeeds + ' m/s');
+  	$('#windDirection1').text(data.windDirection + ' degree');
+  	$('#luxIntensity1').text(data.luxIntensity + ' lux');
   });
 
 });
