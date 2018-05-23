@@ -1,6 +1,7 @@
 /*
+ * Bismillahirahmanirahim
  * * Microcontroller :
- * -- ESP12E on Wemos D1 Mini
+ * -- ESP12E on NODE MCU
  * IC use : 
  * -- 4051 pin switch
  *  S2 S1 S0   Description
@@ -19,6 +20,9 @@
  * BME280 3.3V --> NodeMCU 3V3
  * BME280 SDA --> NodeMCU D2
  * BME280 SCL --> NodeMCU D1
+ * 
+ * Data publish CSV
+ * format : windSpeeds,windDirection,luxIntensity,temperature,humidity;
  */
 
 // define
@@ -151,12 +155,22 @@ void switchMode(int pinS0, int valS0, int pinS1, int valS1 , int pinS2, int valS
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(57600);
-//  wifiSetup();
-//
-//  Serial.print(F("WiFi connected! IP address: "));
-//   //Initialize MQTT Connection
-//  client.setServer(mqttServerIP, mqttPort);
-//  client.setCallback(callback); // callback for incoming message
+
+  // comment this if there's no connection
+  /*
+  wifiSetup();
+
+  Serial.print(F("WiFi connected! IP address: "));
+   //Initialize MQTT Connection
+  client.setServer(mqttServerIP, mqttPort);
+  client.setCallback(callback); // callback for incoming message
+
+  // setup topic
+   client.publish(device1, "Reconnecting"); // acc
+   client.subscribe(device1);  
+   client.subscribe(topicControlling);
+  // end comment 
+  */
 
   // SETUP LED MODE
   // pinMode(LED1, OUTPUT); // lampu
@@ -168,7 +182,7 @@ void setup() {
 
 }
 
-
+// get wind direction
 int readWindDirection(){
   switchMode(D8,LOW,D7,HIGH,D6,HIGH); // y3 Input
   int value = analogRead(ADC);
@@ -177,6 +191,7 @@ int readWindDirection(){
   return abs(angle-360); //reverse
 }
 
+// get wind speed
 int count = 0, rps = 0 , ws = 0;
 int readWindSpeed(){
   switchMode(D8,LOW,D7,HIGH,D6,LOW); // y2 Input
@@ -197,14 +212,16 @@ int readWindSpeed(){
   return count;
 }
 
+// get lux intensity from LDR sensor
 int MIN_VALUE = 25, MAX_VALUE = 800;
 int readLDR(){
   switchMode(D8,LOW,D7,LOW,D6,HIGH); // y1 Input
   int value = analogRead(ADC);
-  int lux = 100 - ((value - MIN_VALUE) * 100 / (MAX_VALUE - MIN_VALUE));
+  int lux = 100 - ((value - MIN_VALUE) * 100 / (MAX_VALUE - MIN_VALUE)); // lux calibration
   return lux;
 }
 
+// get temperature and humidity from DHT11
 float temperature = 0.0 , humidity = 0.0;
 void setTemperatureHumidity(){
   int readData = DHT11.read11(DHTPIN);
@@ -212,18 +229,29 @@ void setTemperatureHumidity(){
   humidity = DHT11.humidity;  
 }
 
+//--- START MAIN LOOP ---///
 int windSpeed = 0, windDirection = 0, luxIntensity = 0;
 int increment = 0;
 float windSpeeds = 0.0;
 void loop() {
   // put your main code here, to run repeatedly:
-  windSpeed = readWindSpeed(); // old
+  
+  // wifi reconnect
+  // comment this if there's no connection
+  if (!client.connected()){
+    reconnect();
+  }
+  client.loop(); // looping forever the client
+  // -- end mqtt setup and wifi-- //
+
+  windSpeed = readWindSpeed(); // just call it to counting rps
   windDirection = readWindDirection();
   luxIntensity = readLDR();
   setTemperatureHumidity();
   printAllValue();
-  
-  delay(200);
+
+  // comment this if no connection
+  // sendToMQTT();
 
   //calcualte windSpeed m/s
   if (increment >= 5){
@@ -233,22 +261,22 @@ void loop() {
   }
   increment++;
   
-
+  delay(200); // stop 200  
 }
+//--- end main LOOP ---///
 
-String windDirectionToAngle(int value) {
 
-    
-}
-
+// send all data to broker
+String dataSent = "";
 void sendToMQTT(){
-  
+  dataSent = String(windSpeeds) + "," + String(windDirection) + "," + String(luxIntensity) + "," + String(temperature) + "," + String(humidity);
+  publishMQTT(device1, dataSent);
 }
 
+// have'nt try yet
 bool pulsing, pulSec;
 unsigned long pulse, pulseHist;
 float rpm, kec;
-// not to try
 float calculateWindSpeed(){
   if(pulsing){
     pulsing=false;
@@ -271,6 +299,7 @@ float calculateWindSpeed(){
    return kec;
 }
 
+// print all value
 void printAllValue(){
   Serial.print("Wind Speed : "); Serial.println(windSpeeds);
   Serial.print("Wind Direction : "); Serial.println(windDirection);
@@ -278,4 +307,3 @@ void printAllValue(){
   Serial.print("Temperature : "); Serial.println(temperature);
   Serial.print("Humidity : "); Serial.println(humidity);
 }
-
